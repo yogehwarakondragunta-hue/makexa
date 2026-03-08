@@ -1,0 +1,14 @@
+{
+  "name": "makexa-app",
+  "version": "1.0.0",
+  "description": "Makexa - Full stack application",
+  "scripts": {
+    "start": "npm run start:server & npm run start:client",
+    "start:server": "cd server && npm start",
+    "start:client": "cd Client && npm run dev",
+    "install:all": "cd server && npm install && cd ../Client && npm install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
