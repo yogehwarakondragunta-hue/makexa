@@ -11,7 +11,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "main": "test_db.js",
+  "main": "server/server.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yogehwarakondragunta-hue/make.git"

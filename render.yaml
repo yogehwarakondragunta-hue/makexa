@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: makexa-api
+    env: node
+    plan: free
+    buildCommand: cd server && npm install && cd ../Client && npm install && npm run build
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: PORT
+        value: 10000
