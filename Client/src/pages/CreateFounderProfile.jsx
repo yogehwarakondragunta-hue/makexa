@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_URL from '../config/api.js';
 
 function CreateFounderProfile() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ function CreateFounderProfile() {
   const handleGenerateOtp = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/startup/generate-otp', {
+      const res = await axios.post(`${API_URL}/api/startup/generate-otp`, {
         mobileNumber: formData.mobileNumber
       });
       if (res.data.success) {
@@ -54,7 +55,7 @@ function CreateFounderProfile() {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/startup/verify-otp', {
+      const res = await axios.post(`${API_URL}/api/startup/verify-otp`, {
         mobileNumber: formData.mobileNumber,
         otp
       });
@@ -82,7 +83,7 @@ function CreateFounderProfile() {
       });
       submitData.append('founderId', founderId);
 
-      const res = await axios.post('http://localhost:5000/api/startup/create', submitData, {
+      const res = await axios.post(`${API_URL}/api/startup/create`, submitData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

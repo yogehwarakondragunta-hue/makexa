@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import API_URL from '../config/api.js';
 
 function SubmitWorkModal({ onClose, project }) {
     const [githubLink, setGithubLink] = useState("");
@@ -33,7 +34,7 @@ function SubmitWorkModal({ onClose, project }) {
             }
 
             const res = await axios.post(
-                `http://localhost:5000/api/founder-projects/${project._id}/submit`,
+                `${API_URL}/api/founder-projects/${project._id}/submit`,
                 formData,
                 { headers: { 'Content-Type': 'multipart/form-data' } }
             );

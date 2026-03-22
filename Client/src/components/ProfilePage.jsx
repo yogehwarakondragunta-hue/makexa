@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from '../config/api.js';
 import CreateStartupModal from "./CreateStartupModal";
 
 function ProfilePage() {
@@ -23,7 +24,7 @@ function ProfilePage() {
       }
 
       try {
-        const res = await axios.get(`http://localhost:5000/api/startup/${id}`);
+        const res = await axios.get(`${API_URL}/api/startup/${id}`);
         if (res.data.success) {
           const data = res.data.data;
           setProfile({
@@ -35,7 +36,7 @@ function ProfilePage() {
             about: data.futureVision,
             startupTitle: data.startupTitle,
             coreIdea: data.coreIdea,
-            aadharPhoto: data.aadharPhoto ? `http://localhost:5000/${data.aadharPhoto.replace(/\\/g, '/')}` : null
+            aadharPhoto: data.aadharPhoto ? `${API_URL}/${data.aadharPhoto.replace(/\\\/g, '/')}` : null
           });
         }
       } catch (err) {

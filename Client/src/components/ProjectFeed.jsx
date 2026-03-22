@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from '../config/api.js';
 import SubmitWorkModal from "./SubmitWorkModal";
 
 export default function ProjectFeed({ onActionClick }) {
@@ -17,9 +18,9 @@ export default function ProjectFeed({ onActionClick }) {
             try {
                 // Fetch Startups, Users, and Founder Projects in parallel
                 const [startupsRes, usersRes, founderProjRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/startup'),
-                    axios.get('http://localhost:5000/api/users'),
-                    axios.get('http://localhost:5000/api/founder-projects')
+                    axios.get(`${API_URL}/api/startup`),
+                    axios.get(`${API_URL}/api/users`),
+                    axios.get(`${API_URL}/api/founder-projects`)
                 ]);
 
                 if (startupsRes.data.success) {
@@ -53,7 +54,7 @@ export default function ProjectFeed({ onActionClick }) {
         }
 
         try {
-            const res = await axios.post('http://localhost:5000/api/messages', {
+            const res = await axios.post(`${API_URL}/api/messages`, {
                 senderId: userId,
                 receiverId: user._id,
                 content: `Hi ${user.name}, I'd like to connect and collaborate with you!`
@@ -576,4 +577,4 @@ const styles = {
         fontSize: '24px',
         lineHeight: '1'
     }
-};
+};

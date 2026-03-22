@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from '../config/api.js';
 
 function FounderDashboard() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ function FounderDashboard() {
       try {
         // Get user profile
         const userRes = await axios.get(
-          "http://localhost:5000/api/auth/me",
+          `${API_URL}/api/auth/me`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -30,7 +31,7 @@ function FounderDashboard() {
 
         // Get user's startups
         const startupsRes = await axios.get(
-          "http://localhost:5000/api/startups/my-startups",
+          `${API_URL}/api/startups/my-startups`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
