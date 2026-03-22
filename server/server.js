@@ -7,6 +7,9 @@ import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import startupRoutes from './routes/startupRoutes.js';
+import applicationRoutes from './routes/applicationRoutes.js';
+import aadharRoutes from './routes/aadharRoutes.js';
+import founderProjectRoutes from './routes/founderProjectRoutes.js';
 
 dotenv.config();
 
@@ -31,6 +34,9 @@ app.get('/', (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/startup', startupRoutes);
+app.use('/api/application', applicationRoutes);
+app.use('/api/aadhar', aadharRoutes);
+app.use('/api/founder-projects', founderProjectRoutes);
 
 // Start Server
 app.listen(PORT, () => {

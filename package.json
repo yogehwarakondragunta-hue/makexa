@@ -10,5 +10,21 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "main": "test_db.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yogehwarakondragunta-hue/make.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/yogehwarakondragunta-hue/make/issues"
+  },
+  "homepage": "https://github.com/yogehwarakondragunta-hue/make#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.2.4"
+  }
 }

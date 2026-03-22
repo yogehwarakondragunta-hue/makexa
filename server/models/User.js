@@ -17,10 +17,10 @@ const userSchema = mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ['founder', 'developer', 'designer', 'Job Seeker', 'Startup Handler'],
+            enum: ['founder', 'developer', 'designer', 'Job Seeker', 'Startup Handler', 'admin'],
             default: 'Job Seeker'
         },
- 
+
         wishlist: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'

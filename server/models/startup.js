@@ -9,49 +9,53 @@ const startupSchema = mongoose.Schema(
         },
         fullName: {
             type: String,
-            required: [true, 'Please add a full name']
+            required: false
         },
         email: {
             type: String,
-            required: [true, 'Please add an email']
+            required: false
         },
         dob: {
             type: Date,
-            required: [true, 'Please add a date of birth']
+            required: false
         },
         aadharPhoto: {
             type: String,
-            required: [true, 'Please upload an Aadhar photo']
+            required: false
         },
         startupTitle: {
             type: String,
-            required: [true, 'Please add a startup title']
+            required: false
         },
         coreIdea: {
             type: String,
-            required: [true, 'Please add a core idea']
+            required: false
         },
         members: {
             type: Number,
-            required: [true, 'Please add the number of members']
+            required: false
         },
         sector: {
             type: String,
-            required: [true, 'Please add a sector']
+            required: false
         },
         futureVision: {
             type: String,
-            required: [true, 'Please add a future vision description']
+            required: false
         },
         mobileNumber: {
             type: String,
-            required: [true, 'Please add a mobile number']
+            required: false
         },
         status: {
             type: String,
             enum: ['under validation', 'approved', 'rejected'],
             default: 'under validation'
-        }
+        },
+        selectedMembers: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }]
     },
     {
         timestamps: true

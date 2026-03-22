@@ -93,3 +93,25 @@ body {
   outline: none;
   border-color: var(--accent);
 }
+
+/* Infinite Scroll Animations */
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes scroll-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.scrolling-wrapper-left {
+  animation: scroll-left 80s linear infinite;
+}
+.scrolling-wrapper-right {
+  animation: scroll-right 40s linear infinite;
+}
+
+.scrolling-wrapper-left:hover,
+.scrolling-wrapper-right:hover {
+  animation-play-state: paused;
+}

@@ -8,7 +8,8 @@ function Signup() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
+    role: "Job Seeker" // Default role
   });
 
   const handleChange = (e) => {
@@ -23,14 +24,24 @@ function Signup() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/signup",
+        "http://localhost:5000/api/users",
         formData
       );
 
-      localStorage.setItem("token", res.data.token);
+      if (res.data.success) {
+        // Technically this API doesn't return a token right now, but we can set their role and ID
+        localStorage.setItem("userRole", res.data.data.role);
+        localStorage.setItem("userId", res.data.data._id);
 
-      alert("Signup successful! Please create your founder profile.");
-      navigate("/create-founder-profile");
+        if (formData.role === 'founder') {
+          // Founders must create a startup profile immediately
+          alert("Signup successful! Please register your startup details next.");
+          navigate("/create-founder-profile");
+        } else {
+          alert("Signup successful! Welcome.");
+          navigate("/job-seeker-dashboard");
+        }
+      }
     } catch (error) {
       console.error(error);
       alert("Signup failed");
@@ -80,6 +91,18 @@ function Signup() {
               required
               style={styles.input}
             />
+          </div>
+
+          <div style={styles.inputGroup}>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              style={styles.input}
+            >
+              <option value="Job Seeker">Job Seeker</option>
+              <option value="founder">Startup Founder</option>
+            </select>
           </div>
 
           <button type="submit" style={styles.button}>

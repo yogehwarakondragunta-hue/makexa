@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import { generateMobileOtp, verifyMobileOtp, createStartupRequest, getStartupProfile } from '../controllers/startupController.js';
+import { generateMobileOtp, verifyMobileOtp, createStartupRequest, getStartupProfile, getStartupByFounderId, getAllStartups } from '../controllers/startupController.js';
 
 const router = express.Router();
 
@@ -43,7 +43,13 @@ router.post('/verify-otp', verifyMobileOtp);
 // Simplified route without auth middleware for now (will need founderId in body)
 router.post('/create', upload.single('aadharPhoto'), createStartupRequest);
 
+// Get all startups
+router.get('/', getAllStartups);
+
 // Get startup profile by ID
 router.get('/:id', getStartupProfile);
+
+// Get startup profile by Founder ID
+router.get('/founder/:founderId', getStartupByFounderId);
 
 export default router;

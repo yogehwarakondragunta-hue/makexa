@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-function CreateStartupModal({ onClose }) {
+function CreateStartupModal({ onClose, initialStartupId = '', joinRole = '' }) {
     const navigate = useNavigate();
     const [step, setStep] = useState(0); // 0: Options, 1: Form, 2: OTP, 3: Success
     const [createdId, setCreatedId] = useState(null);
@@ -10,6 +10,7 @@ function CreateStartupModal({ onClose }) {
         fullName: '',
         email: '',
         dob: '',
+        aadharNumber: '',
         aadharPhoto: null,
         startupTitle: '',
         coreIdea: '',
@@ -21,9 +22,29 @@ function CreateStartupModal({ onClose }) {
     const [otp, setOtp] = useState('');
     const [message, setMessage] = useState('');
 
+    const [joinData, setJoinData] = useState({
+        startupId: initialStartupId,
+        roleAppliedFor: joinRole,
+        coverLetter: '',
+        resumeLink: ''
+    });
+
+    // If initialStartupId is passed, jump to join step (step 4)
+    useEffect(() => {
+        if (initialStartupId) {
+            setStep(4);
+            setJoinData(prev => ({ ...prev, startupId: initialStartupId }));
+        }
+    }, [initialStartupId]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+    };
+
+    const handleJoinInputChange = (e) => {
+        const { name, value } = e.target;
+        setJoinData({ ...joinData, [name]: value });
     };
 
     const handleFileChange = (e) => {
@@ -69,13 +90,18 @@ function CreateStartupModal({ onClose }) {
         try {
             const token = localStorage.getItem('token'); // Might be null if no auth
             // Assuming we mock a user ID if no token exists for the demo
-            let founderId = "000000000000000000000000";
-
             if (token) {
                 const userRes = await axios.get("http://localhost:5000/api/auth/me", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 founderId = userRes.data._id;
+            } else {
+                founderId = localStorage.getItem('userId');
+            }
+
+            if (!founderId) {
+                setMessage("Please login first to create a startup.");
+                return;
             }
 
             const submitData = new FormData();
@@ -98,7 +124,32 @@ function CreateStartupModal({ onClose }) {
             console.error(error);
             setMessage(error.response?.data?.message || 'Failed to create startup request');
         }
-    }
+    };
+
+    const submitJoinForm = async (e) => {
+        e.preventDefault();
+        try {
+            const applicantId = localStorage.getItem('userId');
+
+            if (!applicantId) {
+                setMessage("Please login first to join a startup.");
+                return;
+            }
+
+            const res = await axios.post('http://localhost:5000/api/application/apply', {
+                ...joinData,
+                applicantId
+            });
+
+            if (res.data.success) {
+                setMessage("Application submitted successfully!");
+                setStep(3); // Go to success step
+            }
+        } catch (error) {
+            console.error(error);
+            setMessage(error.response?.data?.message || 'Failed to submit application');
+        }
+    };
 
     return (
         <div style={styles.modalOverlay}>
@@ -107,10 +158,10 @@ function CreateStartupModal({ onClose }) {
 
                 {step === 0 && (
                     <div>
-                        <h2 style={styles.title}>What would you like to do?</h2>
+                        <h2 style={styles.title}>How would you like to connect?</h2>
                         <div style={styles.buttonGroup}>
-                            <button style={styles.primaryBtn} onClick={() => setStep(1)}>Create a startup</button>
-                            <button style={styles.secondaryBtn} onClick={() => alert("Join startup feature coming soon!")}>Join a startup</button>
+                            <button style={styles.primaryBtn} onClick={() => setStep(1)}>Create a Startup</button>
+                            <button style={styles.secondaryBtn} onClick={() => setStep(4)}>Join a Startup</button>
                         </div>
                     </div>
                 )}
@@ -125,7 +176,22 @@ function CreateStartupModal({ onClose }) {
                         <input required style={styles.input} type="date" name="dob" placeholder="Date of Birth" onChange={handleInputChange} />
 
                         <div style={styles.fileInputGroup}>
-                            <label>Aadhar Photo:</label>
+                            <label style={{ fontWeight: '600', color: '#334155' }}>Aadhaar Number:</label>
+                            <input
+                                required
+                                style={styles.input}
+                                type="text"
+                                name="aadharNumber"
+                                placeholder="Enter 12-digit Aadhaar Number"
+                                maxLength={12}
+                                pattern="[0-9]{12}"
+                                title="Aadhaar number must be exactly 12 digits"
+                                onChange={handleInputChange}
+                            />
+                        </div>
+
+                        <div style={styles.fileInputGroup}>
+                            <label style={{ fontWeight: '600', color: '#334155' }}>Aadhaar Photo:</label>
                             <input required style={styles.input} type="file" name="aadharPhoto" accept="image/*" onChange={handleFileChange} />
                         </div>
 
@@ -160,18 +226,33 @@ function CreateStartupModal({ onClose }) {
                     <div style={styles.successContainer}>
                         <div style={styles.successIcon}>✓</div>
                         <h2 style={styles.title}>Success!</h2>
-                        <p>Your idea is under validation!</p>
+                        <p>{createdId ? "Your idea is under validation!" : "Your application was sent!"}</p>
                         <button style={styles.primaryBtn} onClick={() => {
                             onClose();
-                            navigate(`/profile/${createdId}`);
-                        }}>View Profile</button>
+                            if (createdId) navigate(`/profile/${createdId}`);
+                        }}>Back to Feed</button>
                     </div>
+                )}
+
+                {/* JOIN A STARTUP FORM */}
+                {step === 4 && (
+                    <form style={styles.form} onSubmit={submitJoinForm}>
+                        <h2 style={styles.title}>Apply to Join</h2>
+                        {message && <p style={{ color: 'red' }}>{message}</p>}
+
+                        <input required style={styles.input} type="text" name="startupId" placeholder="Startup ID (Paste from Feed)" onChange={handleJoinInputChange} />
+                        <input required style={styles.input} type="text" name="roleAppliedFor" placeholder="Role (e.g. Developer, Designer)" onChange={handleJoinInputChange} />
+                        <textarea required style={styles.textarea} name="coverLetter" placeholder="Why do you want to join?" onChange={handleJoinInputChange}></textarea>
+                        <input style={styles.input} type="url" name="resumeLink" placeholder="Resume/Portfolio URL (Optional)" onChange={handleJoinInputChange} />
+
+                        <button style={styles.primaryBtn} type="submit">Submit Application</button>
+                    </form>
                 )}
 
             </div>
         </div>
     );
-}
+} // <-- Close CreateStartupModal component
 
 const styles = {
     modalOverlay: {

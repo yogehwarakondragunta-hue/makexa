@@ -22,14 +22,30 @@ function Login() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        "http://localhost:5000/api/users/login",
         formData
       );
 
-      localStorage.setItem("token", res.data.token);
+      if (res.data.success) {
+        // Save auth data
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("userRole", res.data.data.role);
+        localStorage.setItem("userId", res.data.data._id);
+        localStorage.setItem("userName", res.data.data.name);
+        localStorage.setItem("userEmail", res.data.data.email);
 
-      alert("Login successful!");
-      navigate("/");
+        alert("Login successful!");
+
+        // Redirect based on role
+        if (res.data.data.role === 'founder') {
+          navigate("/founder-dashboard");
+        } else if (res.data.data.role === 'admin') {
+          navigate("/");
+        } else {
+          // Regular job seekers redirect to their dashboard
+          navigate("/job-seeker-dashboard");
+        }
+      }
     } catch (error) {
       console.error(error);
       alert("Login failed");

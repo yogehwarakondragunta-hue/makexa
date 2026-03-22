@@ -1,4 +1,5 @@
 import Startup from '../models/startup.js';
+import Aadhaar from '../models/Aadhaar.js';
 import twilio from 'twilio';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -69,13 +70,15 @@ export const createStartupRequest = async (req, res) => {
             sector,
             futureVision,
             mobileNumber,
+            aadharNumber,
         } = req.body;
 
         const aadharPhoto = req.file ? req.file.path : null;
 
-        if (!aadharPhoto) {
-            return res.status(400).json({ success: false, message: 'Aadhar photo is required' });
-        }
+        // ── Aadhaar Verification Gate (SKIPPED for now) ──────────────────────
+        // Aadhar check is disabled as per user request.
+        // aadharPhoto and aadharNumber are optional now.
+        // ──────────────────────────────────────────────────────────────────────
 
         // We assume frontend sends founderId for now because there is no auth middleware
         const founderId = req.body.founderId || "000000000000000000000000";
@@ -111,7 +114,14 @@ export const createStartupRequest = async (req, res) => {
 // @access  Public
 export const getStartupProfile = async (req, res) => {
     try {
-        const startup = await Startup.findById(req.params.id);
+        const { id } = req.params;
+
+        // Check if id is a valid mongoose ObjectId
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({ success: false, message: 'Invalid Startup ID format' });
+        }
+
+        const startup = await Startup.findById(id);
 
         if (!startup) {
             return res.status(404).json({ success: false, message: 'Startup not found' });
@@ -120,6 +130,44 @@ export const getStartupProfile = async (req, res) => {
         res.json({ success: true, data: startup });
     } catch (error) {
         console.error("Get Startup Error:", error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+// @route   GET /api/startup/founder/:founderId
+// @desc    Get startup profile by founder ID
+// @access  Public (should eventually be private)
+export const getStartupByFounderId = async (req, res) => {
+    try {
+        const { founderId } = req.params;
+
+        // Check if founderId is a valid mongoose ObjectId
+        if (!founderId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({ success: false, message: 'Invalid Founder ID format' });
+        }
+
+        const startup = await Startup.findOne({ founderId });
+
+        if (!startup) {
+            return res.status(404).json({ success: false, message: 'No startup found for this founder' });
+        }
+
+        res.json({ success: true, data: startup });
+    } catch (error) {
+        console.error("Get Startup by Founder Error:", error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+// @route   GET /api/startup
+// @desc    Get all startups
+// @access  Public
+export const getAllStartups = async (req, res) => {
+    try {
+        const startups = await Startup.find();
+        res.json({ success: true, count: startups.length, data: startups });
+    } catch (error) {
+        console.error("Get All Startups Error:", error);
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };
