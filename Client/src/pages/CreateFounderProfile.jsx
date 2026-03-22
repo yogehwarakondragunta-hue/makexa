@@ -171,8 +171,8 @@ function CreateFounderProfile() {
             <h2 style={styles.title}>Startup Registered!</h2>
             <p style={styles.subtitle}>Your startup <strong>{formData.startupTitle}</strong> has been successfully created and is now part of the Makexa ecosystem.</p>
             <button style={styles.button} onClick={() => {
-              navigate("/");
-            }}>Go to Home Feed</button>
+              navigate("/founder-dashboard");
+            }}>Go to Dashboard</button>
           </div>
         )}
       </div>

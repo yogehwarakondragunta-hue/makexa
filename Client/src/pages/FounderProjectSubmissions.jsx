@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from '../config/api.js';
 
 function FounderProjectSubmissions() {
     const { projectId } = useParams();
@@ -25,7 +26,7 @@ function FounderProjectSubmissions() {
     const fetchSubmissions = async () => {
         try {
             const res = await axios.get(
-                `http://localhost:5000/api/founder-projects/${projectId}/submissions`
+                `${API_URL}/api/founder-projects/${projectId}/submissions`
             );
             if (res.data.success !== false) {
                 setProject(res.data.project);
@@ -43,7 +44,7 @@ function FounderProjectSubmissions() {
         const founderId = localStorage.getItem("userId");
         try {
             const res = await axios.put(
-                `http://localhost:5000/api/founder-projects/submissions/${submissionId}/status`,
+                `${API_URL}/api/founder-projects/submissions/${submissionId}/status`,
                 { status, founderId }
             );
             if (res.data.success) {
@@ -149,12 +150,12 @@ function FounderProjectSubmissions() {
                                         <video
                                             controls
                                             style={{ width: '100%', maxHeight: '400px', borderRadius: '8px', marginTop: '8px', backgroundColor: '#000' }}
-                                            src={sub.videoLink?.startsWith('http') ? sub.videoLink : `http://localhost:5000${sub.videoLink}`}
+                                            src={sub.videoLink?.startsWith('http') ? sub.videoLink : `${API_URL}${sub.videoLink}`}
                                         >
                                             Your browser does not support the video tag.
                                         </video>
                                         <a
-                                            href={sub.videoLink?.startsWith('http') ? sub.videoLink : `http://localhost:5000${sub.videoLink}`}
+                                            href={sub.videoLink?.startsWith('http') ? sub.videoLink : `${API_URL}${sub.videoLink}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             style={{ ...styles.linkCard, marginTop: '8px' }}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from '../config/api.js';
 import PostProjectModal from "../components/PostProjectModal";
 
 function FounderDashboard() {
@@ -28,13 +29,13 @@ function FounderDashboard() {
     const fetchDashboardData = async (founderId) => {
         try {
             // Fetch startup profile
-            const startupRes = await axios.get(`http://localhost:5000/api/startup/founder/${founderId}`);
+            const startupRes = await axios.get(`${API_URL}/api/startup/founder/${founderId}`);
             
             if (startupRes.data.success && startupRes.data.data) {
                 setStartupProfile(startupRes.data.data);
 
                 // Fetch founder's posted projects
-                const projRes = await axios.get(`http://localhost:5000/api/founder-projects/startup/${startupRes.data.data._id}`);
+                const projRes = await axios.get(`${API_URL}/api/founder-projects/startup/${startupRes.data.data._id}`);
                 if (projRes.data.success) {
                     setFounderProjects(projRes.data.data);
                 }
@@ -61,6 +62,13 @@ function FounderDashboard() {
             case "Hard": return { color: "#ef4444", bg: "rgba(239,68,68,0.1)" };
             default: return { color: "#f59e0b", bg: "rgba(245,158,11,0.1)" };
         }
+    };
+
+    const getProjectStatusBadge = (proj) => {
+        if (proj.status === 'closed') {
+            return <span style={styles.acceptedBadge}>✓ Accepted</span>;
+        }
+        return <span style={styles.openBadge}>● Open</span>;
     };
 
     if (loading) return <div style={styles.loading}>Loading Dashboard...</div>;
@@ -142,9 +150,7 @@ function FounderDashboard() {
                                                 }}>
                                                     {proj.difficulty}
                                                 </span>
-                                                <span style={styles.statusDot(proj.status === "open")}>
-                                                    {proj.status === "open" ? "● Open" : "● Closed"}
-                                                </span>
+                                                {getProjectStatusBadge(proj)}
                                             </div>
 
                                             <h3 style={styles.cardTitle}>{proj.title}</h3>
@@ -371,6 +377,23 @@ const styles = {
         color: isOpen ? "#10b981" : "#ef4444",
         fontWeight: "600"
     }),
+    openBadge: {
+        fontSize: "12px",
+        color: "#10b981",
+        fontWeight: "600",
+        padding: "3px 10px",
+        backgroundColor: "rgba(16,185,129,0.1)",
+        borderRadius: "20px"
+    },
+    acceptedBadge: {
+        fontSize: "12px",
+        color: "#8b5cf6",
+        fontWeight: "700",
+        padding: "3px 10px",
+        backgroundColor: "rgba(139,92,246,0.15)",
+        borderRadius: "20px",
+        border: "1px solid rgba(139,92,246,0.3)"
+    },
     cardTitle: {
         margin: "0 0 8px 0",
         fontSize: "18px",

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_URL from '../config/api.js';
 
 function Signup() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ function Signup() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/users",
+        `${API_URL}/api/users`,
         formData
       );
 
@@ -44,7 +45,8 @@ function Signup() {
       }
     } catch (error) {
       console.error(error);
-      alert("Signup failed");
+      const errorMsg = error.response?.data?.message || "Signup failed";
+      alert(errorMsg);
     }
   };
 

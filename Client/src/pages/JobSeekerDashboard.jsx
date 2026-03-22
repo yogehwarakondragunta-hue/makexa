@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from '../config/api.js';
 
 function JobSeekerDashboard() {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ function JobSeekerDashboard() {
 
     const fetchDashboard = async (userId) => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/users/${userId}/dashboard`);
+            const res = await axios.get(`${API_URL}/api/users/${userId}/dashboard`);
             if (res.data.success) {
                 setDashData(res.data.data);
             }

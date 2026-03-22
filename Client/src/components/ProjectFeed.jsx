@@ -188,7 +188,10 @@ export default function ProjectFeed({ onActionClick }) {
                                         }}>
                                             {proj.difficulty}
                                         </span>
-                                        <span style={styles.openBadge}>● Open</span>
+                                        {proj.status === 'closed'
+                                            ? <span style={styles.acceptedBadge}>✓ Accepted</span>
+                                            : <span style={styles.openBadge}>● Open</span>
+                                        }
                                     </div>
 
                                     <h3 style={styles.projectCardTitle}>{proj.title}</h3>
@@ -232,20 +235,26 @@ export default function ProjectFeed({ onActionClick }) {
                                         <span style={styles.reqIcon}>🎥</span> Video required
                                     </div>
 
-                                    <button
-                                        className="btn"
-                                        style={styles.submitWorkBtn}
-                                        onClick={() => {
-                                            const userId = localStorage.getItem('userId');
-                                            if (!userId) {
-                                                alert("Please login first!");
-                                                return;
-                                            }
-                                            setSubmitProject(proj);
-                                        }}
-                                    >
-                                        Submit Your Work
-                                    </button>
+                                    {proj.status === 'closed' ? (
+                                        <div style={styles.acceptedResultBox}>
+                                            🏆 This project has been completed — a submission was accepted!
+                                        </div>
+                                    ) : (
+                                        <button
+                                            className="btn"
+                                            style={styles.submitWorkBtn}
+                                            onClick={() => {
+                                                const userId = localStorage.getItem('userId');
+                                                if (!userId) {
+                                                    alert("Please login first!");
+                                                    return;
+                                                }
+                                                setSubmitProject(proj);
+                                            }}
+                                        >
+                                            Submit Your Work
+                                        </button>
+                                    )}
                                 </div>
                             );
                         })}
@@ -445,7 +454,29 @@ const styles = {
     openBadge: {
         fontSize: '12px',
         color: '#10b981',
-        fontWeight: '600'
+        fontWeight: '600',
+        padding: '3px 10px',
+        backgroundColor: 'rgba(16,185,129,0.12)',
+        borderRadius: '20px'
+    },
+    acceptedBadge: {
+        fontSize: '12px',
+        color: '#8b5cf6',
+        fontWeight: '700',
+        padding: '3px 10px',
+        backgroundColor: 'rgba(139,92,246,0.15)',
+        borderRadius: '20px',
+        border: '1px solid rgba(139,92,246,0.3)'
+    },
+    acceptedResultBox: {
+        background: 'rgba(139,92,246,0.08)',
+        border: '1px solid rgba(139,92,246,0.2)',
+        borderRadius: '10px',
+        padding: '12px 16px',
+        fontSize: '13px',
+        color: '#a78bfa',
+        fontWeight: '600',
+        textAlign: 'center'
     },
     projectCardTitle: {
         margin: '0 0 8px 0',

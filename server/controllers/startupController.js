@@ -60,7 +60,7 @@ export const verifyMobileOtp = (req, res) => {
 // @access  Private (Needs auth token)
 export const createStartupRequest = async (req, res) => {
     try {
-        const {
+        let {
             fullName,
             email,
             dob,
@@ -75,13 +75,22 @@ export const createStartupRequest = async (req, res) => {
 
         const aadharPhoto = req.file ? req.file.path : null;
 
-        // ── Aadhaar Verification Gate (SKIPPED for now) ──────────────────────
-        // Aadhar check is disabled as per user request.
-        // aadharPhoto and aadharNumber are optional now.
-        // ──────────────────────────────────────────────────────────────────────
-
         // We assume frontend sends founderId for now because there is no auth middleware
-        const founderId = req.body.founderId || "000000000000000000000000";
+        const founderId = req.body.founderId;
+
+        if (!founderId) {
+            return res.status(400).json({ success: false, message: "Founder ID is required" });
+        }
+
+        // Fetch user details if not provided
+        if (!fullName || !email) {
+            const User = (await import('../models/User.js')).default;
+            const user = await User.findById(founderId);
+            if (user) {
+                fullName = fullName || user.name;
+                email = email || user.email;
+            }
+        }
 
         const newStartup = await Startup.create({
             founderId,

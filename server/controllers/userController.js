@@ -35,23 +35,37 @@ export const registerUser = async (req, res) => {
             return res.status(400).json({ success: false, message: 'User already exists' });
         }
 
-        user = await User.create({ name, email, password, role });
+        try {
+            user = await User.create({ name, email, password, role });
+            console.log(`User created: ${user._id} (${role})`);
+        } catch (err) {
+            console.error("User creation failed:", err.message);
+            throw err;
+        }
 
         // If user is a founder, auto-create a placeholder startup
         if (role === 'founder') {
-            await Startup.create({
-                founderId: user._id,
-                fullName: name,
-                email: email,
-                startupTitle: `${name}'s Startup`, // Placeholder title
-                status: 'under validation'
-            });
+            try {
+                await Startup.create({
+                    founderId: user._id,
+                    fullName: name,
+                    email: email,
+                    startupTitle: `${name}'s Startup`, // Placeholder title
+                    status: 'under validation'
+                });
+                console.log(`Startup created for founder ${user._id}`);
+            } catch (err) {
+                console.error("Startup creation failed after user registration:", err.message);
+                // We might want to handle this better (e.g., delete the user or allow them to retry)
+                // For now, we throw and let the main catch handle it.
+                throw new Error("User created, but failed to initialize startup profile. " + err.message);
+            }
         }
 
         res.status(201).json({ success: true, data: user });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+        console.error("Registration overall failed:", error.message);
+        res.status(500).json({ success: false, message: error.message || 'Server Error' });
     }
 };
 

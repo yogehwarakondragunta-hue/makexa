@@ -195,6 +195,11 @@ export const updateSubmissionStatus = async (req, res) => {
         submission.status = status;
         await submission.save();
 
+        // If accepted, auto-close the project so no more submissions come in
+        if (status === 'accepted') {
+            await FounderProject.findByIdAndUpdate(submission.projectId, { status: 'closed' });
+        }
+
         res.json({
             success: true,
             message: `Submission ${status}`,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_URL from '../config/api.js';
 
 function CreateStartupModal({ onClose, initialStartupId = '', joinRole = '' }) {
     const navigate = useNavigate();
@@ -54,7 +55,7 @@ function CreateStartupModal({ onClose, initialStartupId = '', joinRole = '' }) {
     const handleGenerateOtp = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5000/api/startup/generate-otp', {
+            const res = await axios.post(`${API_URL}/api/startup/generate-otp`, {
                 mobileNumber: formData.mobileNumber
             });
             if (res.data.success) {
@@ -73,7 +74,7 @@ function CreateStartupModal({ onClose, initialStartupId = '', joinRole = '' }) {
     const handleVerifyOtp = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5000/api/startup/verify-otp', {
+            const res = await axios.post(`${API_URL}/api/startup/verify-otp`, {
                 mobileNumber: formData.mobileNumber,
                 otp
             });
@@ -91,7 +92,7 @@ function CreateStartupModal({ onClose, initialStartupId = '', joinRole = '' }) {
             const token = localStorage.getItem('token'); // Might be null if no auth
             // Assuming we mock a user ID if no token exists for the demo
             if (token) {
-                const userRes = await axios.get("http://localhost:5000/api/auth/me", {
+                const userRes = await axios.get(`${API_URL}/api/auth/me`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 founderId = userRes.data._id;
@@ -110,7 +111,7 @@ function CreateStartupModal({ onClose, initialStartupId = '', joinRole = '' }) {
             });
             submitData.append('founderId', founderId);
 
-            const res = await axios.post('http://localhost:5000/api/startup/create', submitData, {
+            const res = await axios.post(`${API_URL}/api/startup/create`, submitData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -136,7 +137,7 @@ function CreateStartupModal({ onClose, initialStartupId = '', joinRole = '' }) {
                 return;
             }
 
-            const res = await axios.post('http://localhost:5000/api/application/apply', {
+            const res = await axios.post(`${API_URL}/api/application/apply`, {
                 ...joinData,
                 applicantId
             });
