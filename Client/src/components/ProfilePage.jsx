@@ -36,7 +36,7 @@ function ProfilePage() {
             about: data.futureVision,
             startupTitle: data.startupTitle,
             coreIdea: data.coreIdea,
-            aadharPhoto: data.aadharPhoto ? `${API_URL}/${data.aadharPhoto.replace(/\\\/g, '/')}` : null
+            aadharPhoto: data.aadharPhoto ? `${API_URL}/${data.aadharPhoto.replace(/\\/g, '/')}` : null
           });
         }
       } catch (err) {
